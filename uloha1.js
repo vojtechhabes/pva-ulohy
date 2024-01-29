@@ -8,6 +8,8 @@ const isPointValid = (point, sideLength) => {
       return false;
     } else if (point[i] === 0 || point[i] === sideLength) {
       numAxisOnSides++;
+    } else if (point[i] < 20 || point[i] > sideLength - 20) {
+      return false;
     }
   }
 
@@ -147,13 +149,15 @@ const parseText = (content) => {
 };
 
 const main = async () => {
-  const testNum = 3;
+  const testNum = 1;
 
   const input = await fs.readFileSync(
     path.join(__dirname, `/test/uloha1/000${testNum}_in.txt`),
     "utf8"
   );
   const { sideLength, point1, point2 } = parseText(input);
+
+  console.log();
 
   if (isPointValid(point1, sideLength) && isPointValid(point2, sideLength)) {
     const pipes = calculatePipes(point1, point2, sideLength);
@@ -164,17 +168,16 @@ const main = async () => {
       "utf8"
     );
     const lines = output.trim().split("\n");
+
     const pipesOutput = parseInt(lines[3].replace("Delka potrubi: ", ""), 10);
     const hosesOutput = parseInt(lines[4].replace("Delka hadice: ", ""), 10);
 
-    console.log();
-
     console.log(`Potřebujeme ${pipes} metrů potrubí.`);
     if (Math.round(pipes) === Math.round(pipesOutput)) {
-      console.log("Výpočet potrubí je správný.");
+      console.log("✅ Výpočet potrubí je správný.");
     } else {
       console.log(
-        "Výpočet potrubí je špatný (správný výpočet je " + pipesOutput + ")."
+        "❌ Výpočet potrubí je špatný (správný výpočet je " + pipesOutput + ")."
       );
     }
 
@@ -182,17 +185,17 @@ const main = async () => {
 
     console.log(`Potřebujeme ${hoses} metrů hadic.`);
     if (Math.round(hoses) === Math.round(hosesOutput)) {
-      console.log("Výpočet hadic je správný.");
+      console.log("✅ Výpočet hadic je správný.");
     } else {
       console.log(
-        "Výpočet hadic je špatný (správný výpočet je " + hosesOutput + ")."
+        "❌ Výpočet hadic je špatný (správný výpočet je " + hosesOutput + ")."
       );
     }
-
-    console.log();
   } else {
-    console.log("Špatný vstup.");
+    console.log("❌ Špatný vstup.");
   }
+
+  console.log();
 };
 
 main();
