@@ -1,10 +1,7 @@
 const fs = require("fs");
+const path = require("path");
 
-const sideLength = 184;
-const point1 = [21, 37, 0];
-const point2 = [96, 55, 184];
-
-const isPointValid = (point) => {
+const isPointValid = (point, sideLength) => {
   let numAxisOnSides = 0;
   for (let i = 0; i < 3; i++) {
     if (point[i] < 0 || point[i] > sideLength) {
@@ -21,7 +18,7 @@ const isPointValid = (point) => {
   return true;
 };
 
-const isOnOppositeSide = (point1, point2) => {
+const isOnOppositeSide = (point1, point2, sideLength) => {
   if (Math.abs(point1[0] - point2[0]) === sideLength) {
     return true;
   }
@@ -53,8 +50,8 @@ const isOnLine = (point1, point2) => {
   return false;
 };
 
-const calculatePipes = (point1, point2) => {
-  if (isOnOppositeSide(point1, point2)) {
+const calculatePipes = (point1, point2, sideLength) => {
+  if (isOnOppositeSide(point1, point2, sideLength)) {
     let index = 0;
 
     for (let i = 0; i < 3; i++) {
@@ -77,27 +74,23 @@ const calculatePipes = (point1, point2) => {
         imaginaryPoint2[i] = sideLength;
 
         distances.push(
-          calculatePipesTest(imaginaryPoint1, point2) + distanceSide1
+          calculatePipesNotOnOppositeSide(imaginaryPoint1, point2) +
+            distanceSide1
         );
         distances.push(
-          calculatePipesTest(imaginaryPoint2, point2) + distanceSide2
+          calculatePipesNotOnOppositeSide(imaginaryPoint2, point2) +
+            distanceSide2
         );
       }
     }
 
     return Math.min(...distances);
   } else {
-    const xDistance = Math.abs(point1[0] - point2[0]);
-    const yDistance = Math.abs(point1[1] - point2[1]);
-    const zDistance = Math.abs(point1[2] - point2[2]);
-
-    const finalDistance = xDistance + yDistance + zDistance;
-
-    return finalDistance;
+    return calculatePipesNotOnOppositeSide(point1, point2);
   }
 };
 
-const calculatePipesTest = (point1, point2) => {
+const calculatePipesNotOnOppositeSide = (point1, point2) => {
   const xDistance = Math.abs(point1[0] - point2[0]);
   const yDistance = Math.abs(point1[1] - point2[1]);
   const zDistance = Math.abs(point1[2] - point2[2]);
@@ -107,11 +100,11 @@ const calculatePipesTest = (point1, point2) => {
   return finalDistance;
 };
 
-const calculateHoses = (point1, point2) => {
-  if (isOnOppositeSide(point1, point2)) {
+const calculateHoses = (point1, point2, sideLength) => {
+  if (isOnOppositeSide(point1, point2, sideLength)) {
   } else {
     if (isOnLine(point1, point2)) {
-      return calculatePipes(point1, point2);
+      return calculatePipes(point1, point2, sideLength);
     } else {
       const xDistance = Math.abs(point1[0] - point2[0]);
       const yDistance = Math.abs(point1[1] - point2[1]);
@@ -140,13 +133,63 @@ const calculateHoses = (point1, point2) => {
   }
 };
 
-const main = () => {
-  if (isPointValid(point1) && isPointValid(point2)) {
-    const pipes = calculatePipes(point1, point2);
-    const hoses = calculateHoses(point1, point2);
+const parseText = (content) => {
+  const lines = content.trim().split("\n");
+  const sideLength = parseInt(lines[0], 10);
+  const point1 = lines[1].split(" ").map(Number);
+  const point2 = lines[2].split(" ").map(Number);
+
+  return {
+    sideLength,
+    point1,
+    point2,
+  };
+};
+
+const main = async () => {
+  const testNum = 3;
+
+  const input = await fs.readFileSync(
+    path.join(__dirname, `/test/uloha1/000${testNum}_in.txt`),
+    "utf8"
+  );
+  const { sideLength, point1, point2 } = parseText(input);
+
+  if (isPointValid(point1, sideLength) && isPointValid(point2, sideLength)) {
+    const pipes = calculatePipes(point1, point2, sideLength);
+    const hoses = calculateHoses(point1, point2, sideLength);
+
+    const output = await fs.readFileSync(
+      path.join(__dirname, `/test/uloha1/000${testNum}_out.txt`),
+      "utf8"
+    );
+    const lines = output.trim().split("\n");
+    const pipesOutput = parseInt(lines[3].replace("Delka potrubi: ", ""), 10);
+    const hosesOutput = parseInt(lines[4].replace("Delka hadice: ", ""), 10);
+
+    console.log();
 
     console.log(`Potřebujeme ${pipes} metrů potrubí.`);
+    if (Math.round(pipes) === Math.round(pipesOutput)) {
+      console.log("Výpočet potrubí je správný.");
+    } else {
+      console.log(
+        "Výpočet potrubí je špatný (správný výpočet je " + pipesOutput + ")."
+      );
+    }
+
+    console.log();
+
     console.log(`Potřebujeme ${hoses} metrů hadic.`);
+    if (Math.round(hoses) === Math.round(hosesOutput)) {
+      console.log("Výpočet hadic je správný.");
+    } else {
+      console.log(
+        "Výpočet hadic je špatný (správný výpočet je " + hosesOutput + ")."
+      );
+    }
+
+    console.log();
   } else {
     console.log("Špatný vstup.");
   }

@@ -1,0 +1,5 @@
+Rozmer mistnosti:
+Bod #1:
+Bod #2:
+Delka potrubi: 400
+Delka hadice: 400.000000
