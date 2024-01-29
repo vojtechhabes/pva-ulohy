@@ -149,7 +149,7 @@ const parseText = (content) => {
 };
 
 const main = async () => {
-  const testNum = 1;
+  const testNum = 2;
 
   const input = await fs.readFileSync(
     path.join(__dirname, `/test/uloha1/000${testNum}_in.txt`),
@@ -177,7 +177,7 @@ const main = async () => {
       console.log("✅ Výpočet potrubí je správný.");
     } else {
       console.log(
-        "❌ Výpočet potrubí je špatný (správný výpočet je " + pipesOutput + ")."
+        "💀 Výpočet potrubí je špatný (správný výpočet je " + pipesOutput + ")."
       );
     }
 
@@ -188,11 +188,11 @@ const main = async () => {
       console.log("✅ Výpočet hadic je správný.");
     } else {
       console.log(
-        "❌ Výpočet hadic je špatný (správný výpočet je " + hosesOutput + ")."
+        "💀 Výpočet hadic je špatný (správný výpočet je " + hosesOutput + ")."
       );
     }
   } else {
-    console.log("❌ Špatný vstup.");
+    console.log("💀 Špatný vstup.");
   }
 
   console.log();
