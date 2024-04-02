@@ -29,7 +29,6 @@ const validate = (points) => {
         return false;
       }
     }
-    // Zkontrolujte, zda body splývají (mají stejné souřadnice)
     const [point1, point2, point3] = points;
     if (
       (point1[0] === point2[0] && point1[1] === point2[1]) ||

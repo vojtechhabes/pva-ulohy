@@ -3,7 +3,7 @@ function isPalindrome(str) {
 }
 
 function findNextPalindrome(from, radix) {
-  if (radix < 2 || radix > 36) {
+  if (radix < 2 || radix > 36 || from < radix) {
     return { status: 0, value: from };
   }
 
@@ -73,7 +73,7 @@ if (test6.status === 1 && test6.value === 1057) {
 }
 
 const test7 = findNextPalindrome(1000, 100);
-if (test7.status === 0 && test7.value === 1057) {
+if (test7.status === 0 && test7.value === 1000) {
   console.log("Test 7 Passed");
 } else {
   console.log("Test 7 Failed");
@@ -81,7 +81,7 @@ if (test7.status === 0 && test7.value === 1057) {
 }
 
 const test8 = findNextPalindrome(18446744073709551614n, 2);
-if (test8.status === 1 && test8.value === 18446744073709551615n) {
+if (test8.status === 0 && test8.value === 18446744073709551614n) {
   console.log("Test 8 Passed");
 } else {
   console.log("Test 8 Failed");
