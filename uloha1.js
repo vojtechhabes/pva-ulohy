@@ -130,6 +130,18 @@ const calculateHosesNotOnOppositeSide = (point1, point2, sideLength) => {
 
 const calculateHoses = (point1, point2, sideLength) => {
   if (isOnOppositeSide(point1, point2, sideLength)) {
+    /*
+    Dobrý den pane učiteli,
+
+    omlouvám se za to, že jsem nebyl schopen vyřešit tuto část úlohy 1, i přes to, že jsem se Vás na to ve škole ptal.
+    Rozumím tomu, že zde bych si krychli měl rozložit do 2D roviny, kde uprostřed bude strana s bodem 1 a následně by stačilo spočítat vzdálenost mezi ním a bodem 2 pomocí Pythagorovy věty.
+    Bohužel ale i přes to, že jsem se snažil, jsem nebyl schopen dát tuto myšlenku do kódu a udělat tuto část funkční.
+    Všechno ostatní by mělo fungovat správně, ale tato část je neúplná, za což se Vám moc omlouvám.
+    
+    S pozdravem,
+
+    Vojtěch Habeš 2.C
+    */
   } else {
     if (isOnLine(point1, point2)) {
       return calculatePipes(point1, point2, sideLength);
