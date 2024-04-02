@@ -102,100 +102,107 @@ const calculatePipesNotOnOppositeSide = (point1, point2) => {
   return finalDistance;
 };
 
+const calculateHosesNotOnOppositeSide = (point1, point2, sideLength) => {
+  const xDistance = Math.abs(point1[0] - point2[0]);
+  const yDistance = Math.abs(point1[1] - point2[1]);
+  const zDistance = Math.abs(point1[2] - point2[2]);
+
+  let index = 0;
+
+  for (let i = 0; i < 3; i++) {
+    if (
+      (point1[i] !== 0 || point1[i] !== sideLength) &&
+      (point2[i] !== 0 || point2[i] !== sideLength)
+    ) {
+      index = i;
+      break;
+    }
+  }
+
+  if (index === 0) {
+    return Math.sqrt((yDistance + zDistance) ** 2 + xDistance ** 2);
+  } else if (index === 1) {
+    return Math.sqrt((xDistance + zDistance) ** 2 + yDistance ** 2);
+  } else {
+    return Math.sqrt((xDistance + yDistance) ** 2 + zDistance ** 2);
+  }
+};
+
 const calculateHoses = (point1, point2, sideLength) => {
   if (isOnOppositeSide(point1, point2, sideLength)) {
   } else {
     if (isOnLine(point1, point2)) {
       return calculatePipes(point1, point2, sideLength);
     } else {
-      const xDistance = Math.abs(point1[0] - point2[0]);
-      const yDistance = Math.abs(point1[1] - point2[1]);
-      const zDistance = Math.abs(point1[2] - point2[2]);
-
-      let index = 0;
-
-      for (let i = 0; i < 3; i++) {
-        if (
-          (point1[i] !== 0 || point1[i] !== sideLength) &&
-          (point2[i] !== 0 || point2[i] !== sideLength)
-        ) {
-          index = i;
-          break;
-        }
-      }
-
-      if (index === 0) {
-        return Math.sqrt((yDistance + zDistance) ** 2 + xDistance ** 2);
-      } else if (index === 1) {
-        return Math.sqrt((xDistance + zDistance) ** 2 + yDistance ** 2);
-      } else {
-        return Math.sqrt((xDistance + yDistance) ** 2 + zDistance ** 2);
-      }
+      return calculateHosesNotOnOppositeSide(point1, point2, sideLength);
     }
   }
 };
 
 const parseText = (content) => {
-  const lines = content.trim().split("\n");
-  const sideLength = parseInt(lines[0], 10);
-  const point1 = lines[1].split(" ").map(Number);
-  const point2 = lines[2].split(" ").map(Number);
+  try {
+    const lines = content.trim().split("\n");
+    const sideLength = parseInt(lines[0], 10);
+    const point1 = lines[1].split(" ").map(Number);
+    const point2 = lines[2].split(" ").map(Number);
 
-  return {
-    sideLength,
-    point1,
-    point2,
-  };
+    return {
+      sideLength,
+      point1,
+      point2,
+    };
+  } catch (error) {
+    return false;
+  }
 };
 
 const main = async () => {
-  const testNum = 2;
-
-  const input = await fs.readFileSync(
-    path.join(__dirname, `/test/uloha1/000${testNum}_in.txt`),
-    "utf8"
-  );
-  const { sideLength, point1, point2 } = parseText(input);
-
-  console.log();
-
-  if (isPointValid(point1, sideLength) && isPointValid(point2, sideLength)) {
-    const pipes = calculatePipes(point1, point2, sideLength);
-    const hoses = calculateHoses(point1, point2, sideLength);
-
-    const output = await fs.readFileSync(
-      path.join(__dirname, `/test/uloha1/000${testNum}_out.txt`),
+  for (let testNum = 0; testNum <= 6; testNum++) {
+    const input = await fs.readFileSync(
+      path.join(__dirname, `/test/uloha1/000${testNum}_in.txt`),
       "utf8"
     );
-    const lines = output.trim().split("\n");
+    const { sideLength, point1, point2 } = parseText(input);
 
-    const pipesOutput = parseInt(lines[3].replace("Delka potrubi: ", ""), 10);
-    const hosesOutput = parseInt(lines[4].replace("Delka hadice: ", ""), 10);
+    if (!sideLength || !point1 || !point2) {
+      console.log(`Test ${testNum}:`);
+      console.log("Neplatný vstup");
+      console.log();
+      continue;
+    }
 
-    console.log(`Potřebujeme ${pipes} metrů potrubí.`);
-    if (Math.round(pipes) === Math.round(pipesOutput)) {
-      console.log("✅ Výpočet potrubí je správný.");
-    } else {
-      console.log(
-        "💀 Výpočet potrubí je špatný (správný výpočet je " + pipesOutput + ")."
+    console.log(`Test ${testNum}:`);
+
+    if (isPointValid(point1, sideLength) && isPointValid(point2, sideLength)) {
+      const pipes = calculatePipes(point1, point2, sideLength);
+      const hoses = calculateHoses(point1, point2, sideLength);
+
+      const output = await fs.readFileSync(
+        path.join(__dirname, `/test/uloha1/000${testNum}_out.txt`),
+        "utf8"
       );
+      const lines = output.trim().split("\n");
+
+      const pipesOutput = parseInt(lines[3].replace("Delka potrubi: ", ""), 10);
+      const hosesOutput = parseInt(lines[4].replace("Delka hadice: ", ""), 10);
+
+      if (Math.round(pipes) === Math.round(pipesOutput)) {
+        console.log(`potrubí: ${pipes} (passed)`);
+      } else {
+        console.log(`potrubí: ${pipes} (failed, expected ${pipesOutput})`);
+      }
+
+      if (Math.round(hoses) === Math.round(hosesOutput)) {
+        console.log(`hadice: ${hoses} (passed)`);
+      } else {
+        console.log(`hadice: ${hoses} (failed, expected ${hosesOutput})`);
+      }
+    } else {
+      console.log("Neplatný vstup");
     }
 
     console.log();
-
-    console.log(`Potřebujeme ${hoses} metrů hadic.`);
-    if (Math.round(hoses) === Math.round(hosesOutput)) {
-      console.log("✅ Výpočet hadic je správný.");
-    } else {
-      console.log(
-        "💀 Výpočet hadic je špatný (správný výpočet je " + hosesOutput + ")."
-      );
-    }
-  } else {
-    console.log("💀 Špatný vstup.");
   }
-
-  console.log();
 };
 
 main();
