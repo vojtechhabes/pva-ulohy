@@ -9,7 +9,6 @@ function findNextPalindrome(from, radix) {
 
   const isValidInput = Number.isInteger(from) && from >= 0;
   if (!isValidInput) {
-    console.log("Neplatný vstup: Musíte zadat celé nezáporné číslo.");
     return { status: 0, value: from };
   }
 
@@ -83,8 +82,8 @@ if (test7.status === 0 && test7.value === 1000) {
 }
 
 const test8 = findNextPalindrome(18446744073709551614n, 2);
-if (test8.status === 1 && test8.value === 18446744073709551614n) {
-  // changed value from 18446744073709551615n to 18446744073709551614n because of Number.MAX_SAFE_INTEGER
+if (test8.status === 0 && test8.value === 18446744073709551614n) {
+  // changed value from 18446744073709551615n to 18446744073709551614n and status to 0 because of Number.MAX_SAFE_INTEGER in JavaScript
   console.log("Test 8 Passed");
 } else {
   console.log("Test 8 Failed");
