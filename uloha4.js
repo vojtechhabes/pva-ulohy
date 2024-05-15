@@ -3,6 +3,7 @@ const path = require("path");
 
 const getSums = (numbersArr) => {
   const sums = [];
+
   for (let i = 0; i < numbersArr.length; i++) {
     let sum = numbersArr[i];
     for (let j = i + 1; j < numbersArr.length; j++) {
@@ -42,7 +43,7 @@ const main = async () => {
       "utf8"
     );
 
-    input = input.trim().replaceAll("\n", "");
+    input = input.trim().replaceAll("\n", " ");
     const inputRegex = /^-?\d+( -?\d+)*$/;
 
     if (!inputRegex.test(input)) {
@@ -56,6 +57,20 @@ const main = async () => {
       const sums = getSums(numbersArr);
       const sumCount = sameSums(sums);
       console.log(sumCount);
+
+      if (
+        sumCount ===
+        parseInt(
+          output
+            .trim()
+            .replaceAll("\n", "")
+            .replaceAll("Posloupnost:Pocet dvojic: ", "")
+        )
+      ) {
+        console.log("Test passed\n");
+      } else {
+        console.log("Test failed\n");
+      }
     } else {
       console.log("Invalid input\n");
       continue;
