@@ -85,7 +85,6 @@ const main = async () => {
     }
 
     const distances = getDistances(planes);
-    console.log(planes);
     printSmallestDistances(distances);
   }
 };
