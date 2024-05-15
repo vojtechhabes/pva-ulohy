@@ -49,10 +49,6 @@ const main = async () => {
       path.join(__dirname, `/test/uloha5/000${testNum}_in.txt`),
       "utf8"
     );
-    const output = await fs.readFileSync(
-      path.join(__dirname, `/test/uloha5/000${testNum}_out.txt`),
-      "utf8"
-    );
 
     const inputLines = input.trim().split("\n");
     const planes = [];
