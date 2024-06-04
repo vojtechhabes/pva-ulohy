@@ -65,6 +65,14 @@ while (true) {
   game.addUser(new User(name));
 }
 
+if (game.players.length === 0) {
+  console.log("Hra nemá žádné hráče.");
+  process.exit();
+} else if (game.players.length < 2 || game.players.length > 5) {
+  console.log("Hra musí mít 2-5 hráčů.");
+  process.exit();
+}
+
 console.log();
 
 while (true) {
